@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+  name: grpc-streaming-ingress
+spec:
+  ingressClassName: azure-api-gateway
+  rules:
+  - http:
+      paths:
+      # Reflection services
+      - path: /grpc.reflection.v1alpha.ServerReflection
+        pathType: Prefix
+        backend:
+          service:
+            name: go-grpc-echo-server
+            port:
+              number: 80
+              
+      # Echo service base path
+      - path: /grpc.examples.echo.Echo
+        pathType: Prefix
+        backend:
+          service:
+            name: go-grpc-echo-server
+            port:
+              number: 80

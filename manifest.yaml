@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: go-grpc-echo-server
+  name: go-grpc-echo-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-grpc-echo-server
+  template:
+    metadata:
+      labels:
+        app: go-grpc-echo-server
+    spec:
+      containers:
+      - image: yourrepo.azurecr.io/external/grpcecho:e2e
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+        name: go-grpc-echo-server
+        ports:
+        - containerPort: 50051
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: go-grpc-echo-server
+  name: go-grpc-echo-server
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 50051
+  selector:
+    app: go-grpc-echo-server
+  type: ClusterIP
